@@ -12,7 +12,7 @@ def generate_keys():
 
     return private_key, public_key
 
-def sign(private_key, message):
+def generate_signature(private_key, message):
     signature = private_key.sign(
         message,
         padding.PSS(), # Preenche a mensagem com bytes aleatórios
