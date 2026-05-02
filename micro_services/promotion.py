@@ -1,5 +1,4 @@
 import json
-from rabbitmq import RabbitMQ
 from encryption import generate_keys, generate_signature, verify_event
 
 class Promotion:
