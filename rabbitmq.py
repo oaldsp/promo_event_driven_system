@@ -33,6 +33,7 @@ class RabbitMQ:
             routing_key=routing_key, # Cabeçalho da mensagem
             body=json.dumps(event)
         )
+        print(f"[{content['id']}] Evento publicado")
     
     def register_service_public_key(self,service_name, public_key):
         self.service_public_keys[service_name] = public_key

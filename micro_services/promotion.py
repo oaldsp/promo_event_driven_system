@@ -16,7 +16,7 @@ class Promotion:
             event = json.loads(event_json) # Converte o JSON para dicionário
             content = event["content"]
 
-            print("Promoção validada:", content)
+            print(f"[{content['id']}]Promoção validada:")
 
             # publicar promotion.published
             signature = generate_signature(content)

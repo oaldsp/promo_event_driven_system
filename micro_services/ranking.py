@@ -14,7 +14,6 @@ class Ranking:
         self.rabbitmq = rabbitmq
         rabbitmq.register_service_public_key("ranking", self.public_key)
 
-
     def callback(self, event_json):
         if verify_event(event_json):
             event = json.loads(event_json) # Converte o JSON para dicionário
@@ -46,3 +45,4 @@ if __name__ == "__main__":
 
     print("Ranking rodando...")
     channel.start_consuming()
+    
