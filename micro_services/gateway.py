@@ -6,9 +6,10 @@ class Gateway:
     private_key = None
     public_key = None
 
-    def __init__(self):
-        self.rabbitmq = RabbitMQ()
+    def __init__(self, rabbitmq):
         self.private_key, self.public_key = generate_keys()
+        self.rabbitmq = rabbitmq
+        rabbitmq.register_service_public_key("gateway", self.public_key)
 
     def register_promotion(self):
         promotion = {

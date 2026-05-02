@@ -8,6 +8,7 @@ EXCHANGE = 'promotion' # Roteador de mensagens
 
 class RabbitMQ:
     channel = None
+    service_public_keys = {}
 
     def __init__(self):
         # BlockingConnection -> Espera a resposta para cada ação
@@ -36,3 +37,6 @@ class RabbitMQ:
             routing_key=routing_key, # Cabeçalho da mensagem
             body=json.dumps(event)
         )
+    
+    def register_service_public_key(self,service_name, public_key):
+        self.service_public_keys[service_name] = public_key
