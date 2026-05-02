@@ -1,10 +1,9 @@
 import os
 import pika
 import json
-from encryption import generate_signature
 
 HOST = os.getenv("HOST", "localhost")
-EXCHANGE = 'promotion' # Roteador de mensagens
+EXCHANGE = 'promotions' # Roteador de mensagens
 
 class RabbitMQ:
     channel = None
@@ -22,10 +21,7 @@ class RabbitMQ:
             exchange_type='topic'
         )
   
-    def publish(self, author, private_key, routing_key, content):
-        body = json.dumps(content).encode() # Converte para bytes
-        signature = generate_signature(private_key, body)
-
+    def publish(self, author, signature, routing_key, content):
         event = {
             "content": content,
             "signature": signature,

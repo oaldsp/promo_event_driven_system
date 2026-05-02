@@ -1,5 +1,4 @@
-from rabbitmq import RabbitMQ
-from encryption import generate_keys
+from encryption import generate_keys, generate_signature
 
 class Gateway:
     rabbitmq = None
@@ -22,7 +21,8 @@ class Gateway:
         promotion["name"] = input("Nome: ")
         promotion["category"] = input("Categoria:")
 
-        self.rabbitmq.publish("gateway", self.private_key, "promotion.received", promotion)
+        signature = generate_signature(promotion)
+        self.rabbitmq.publish("gateway", signature, "promotion.received", promotion)
         print("Promoção enviada para cadastro.")
 
     def vote(self):
@@ -34,7 +34,8 @@ class Gateway:
         print("========CADASTRAR PROMOÇÃO========")
         vote["promotion_id"] = input("Promoção: ")
 
-        self.rabbitmq.publish("gateway", self.private_key, "promotion.voto", vote)
+        signature = generate_signature(vote)
+        self.rabbitmq.publish("gateway", signature, "promotion.voto", vote)
         print("Voto enviada para cadastro.")
 
 if __name__ == "__main__":
