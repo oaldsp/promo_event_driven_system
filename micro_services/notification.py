@@ -2,10 +2,6 @@ import json
 from encryption import generate_keys, generate_signature
 
 class Notification:
-    rabbitmq = None
-    private_key = None
-    public_key = None
-
     def __init__(self, rabbitmq):
         self.private_key, self.public_key = generate_keys()
         self.rabbitmq = rabbitmq
@@ -36,3 +32,4 @@ if __name__ == "__main__":
 
     print("Notificacao rodando...")
     channel.start_consuming()
+    

@@ -4,14 +4,10 @@ from encryption import generate_keys, generate_signature, verify_event
 THRESHOLD = 2
 
 class Ranking:
-    rabbitmq = None
-    private_key = None
-    public_key = None
-    votes = {}
-
     def __init__(self, rabbitmq):
         self.private_key, self.public_key = generate_keys()
         self.rabbitmq = rabbitmq
+        self.votes = {}
         rabbitmq.register_service_public_key("ranking", self.public_key)
 
     def callback(self, event_json):

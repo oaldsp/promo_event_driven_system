@@ -6,10 +6,9 @@ HOST = os.getenv("HOST", "localhost")
 EXCHANGE = 'promotions' # Roteador de mensagens
 
 class RabbitMQ:
-    channel = None
-    service_public_keys = {}
-
     def __init__(self):
+        self.service_public_keys = {}
+
         # BlockingConnection -> Espera a resposta para cada ação
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=HOST)
