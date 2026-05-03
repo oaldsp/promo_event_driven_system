@@ -1,10 +1,7 @@
 FROM python:3.11
 
-WORKDIR /app
+ARG SERVICE_NAME
+WORKDIR /${SERVICE_NAME}
 
-COPY requirements.txt .
+COPY . . 
 RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-CMD ["python", "gateway.py"]

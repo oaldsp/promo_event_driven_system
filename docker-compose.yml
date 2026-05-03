@@ -8,43 +8,61 @@ services:
       #http://localhost:15672 user: guest pass: guest
 
   gateway:
-    build: .
+    build:
+      context: .
+      args:
+        SERVICE_NAME: gateway
     container_name: gateway
-    command: python gateway.py
+    command: python  micro_services/gateway.py
     depends_on:
       - rabbitmq
 
-  promocao:
-    build: .
-    container_name: promocao
-    command: python promocao_service.py
+  promotion:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: promotion
+    container_name: promotion
+    command: python  micro_services/promotion.py
     depends_on:
       - rabbitmq
 
   ranking:
-    build: .
+    build:
+      context: .
+      args:
+        SERVICE_NAME: ranking
     container_name: ranking
-    command: python ranking_service.py
+    command: python  micro_services/ranking.py
     depends_on:
       - rabbitmq
 
-  notificacao:
-    build: .
-    container_name: notificacao
-    command: python notificacao_service.py
+  notification:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: notification
+    container_name: notification
+    command: python  micro_services/notification.py
     depends_on:
       - rabbitmq
 
-  cliente1:
-    build: .
-    container_name: cliente1
-    command: python cliente.py
+  client1:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: client1
+    container_name: client1
+    command: python  client.py
     depends_on:
       - rabbitmq
 
-  cliente2:
-    build: .
-    container_name: cliente2
-    command: python cliente.py
+  client2:
+    build:
+      context: .
+      args:
+        SERVICE_NAME: client2
+    container_name: client2
+    command: python  client.py
     depends_on:
       - rabbitmq
