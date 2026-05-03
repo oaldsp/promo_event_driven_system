@@ -1,0 +1,50 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Interface web (dashboard)
+      #http://localhost:15672 user: guest pass: guest
+
+  gateway:
+    build: .
+    container_name: gateway
+    command: python gateway.py
+    depends_on:
+      - rabbitmq
+
+  promocao:
+    build: .
+    container_name: promocao
+    command: python promocao_service.py
+    depends_on:
+      - rabbitmq
+
+  ranking:
+    build: .
+    container_name: ranking
+    command: python ranking_service.py
+    depends_on:
+      - rabbitmq
+
+  notificacao:
+    build: .
+    container_name: notificacao
+    command: python notificacao_service.py
+    depends_on:
+      - rabbitmq
+
+  cliente1:
+    build: .
+    container_name: cliente1
+    command: python cliente.py
+    depends_on:
+      - rabbitmq
+
+  cliente2:
+    build: .
+    container_name: cliente2
+    command: python cliente.py
+    depends_on:
+      - rabbitmq
