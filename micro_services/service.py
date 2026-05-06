@@ -11,13 +11,13 @@ EXCHANGE = 'promotions' # Roteador de mensagens
 RABBITMQ_PORT = os.getenv("RABBITMQ_PORT")
 
 class Service:
-    def __init__(self, name):
+    def __init__(self, name, routing_keys):
         self.name = name
         self.channel = self._setup_rabbitmq_exchange()
         self.private_key, self.public_key = self._generate_keys()      
         
         self._register_public_key()
-        self.__configure_queues()
+        self._configure_queues(routing_keys)
 
         print(f"[{self.name}]Serviço rodando...")
         self.channel.start_consuming()
@@ -51,8 +51,13 @@ class Service:
                 encoding=serialization.Encoding.PEM, # Tipo de codificação
                 format=serialization.PublicFormat.SubjectPublicKeyInfo # Estrutura da chave pública
             ))
+    
+    def get_public_key(service_name):
+        path = f"/keys/{service_name}_public.pem"
 
-
+        with open(path, "rb") as f:
+            return serialization.load_pem_public_key(f.read())
+        
     def _configure_queues(self, routing_keys):
         name_queue = f'{self.name}_queue'
 
@@ -76,7 +81,7 @@ class Service:
 
     def verify_event(self, event):
         event = json.loads(event) # Converte o JSON para dicionário
-        public_key = self.rabbitmq.service_public_keys.get(event["producer"]) # Busca a chave pública do produtor da mensagem
+        public_key = self.get_public_key(event["producer"]) # Busca a chave pública do produtor da mensagem
     
         try:
             public_key.verify(
