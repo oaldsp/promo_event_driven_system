@@ -68,7 +68,7 @@ class Service:
 
         self.channel.basic_consume(queue=name_queue, on_message_callback=self.callback(), auto_ack=True)
 
-    def generate_signature(self, message):
+    def _generate_signature(self, message):
         signature = self.private_key.sign(
             json.dumps(message).encode(), # Converte para bytes
             padding.PSS(), # Preenche a mensagem com bytes aleatórios
@@ -94,7 +94,9 @@ class Service:
         except InvalidSignature:
             return False
 
-    def publish(self, author, signature, routing_key, content):
+    def publish(self, author, routing_key, content):
+        signature = self._generate_signature(content)
+
         event = {
             "content": content,
             "signature": signature,
@@ -108,15 +110,7 @@ class Service:
         )
         print(f"[{content['id']}] Evento publicado")
 
-    def callback(self, event_json):
-        event = json.loads(event_json) # Converte o JSON para dicionário
-        content = event["content"]
-
-        category = content.get("category", "geral")
-        routing_key = f"promocao.{category}"
-
-        signature = self._generate_signature(content)
-        self.rabbitmq.publish("notification", signature, routing_key, content)
-
-        print(f"Notificação enviada: {routing_key}")       
+    def callback(self):
+        # É necessário implementar o callback em cada serviço para processar as mensagens recebidas
+        pass
     
