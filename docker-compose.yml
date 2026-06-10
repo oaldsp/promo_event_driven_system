@@ -8,6 +8,8 @@ services:
       #http://localhost:15672 user: guest pass: guest
 
   gateway:
+    volumes:
+      - ./micro_services/public_keys:/gateway/micro_services/public_keys
     build:
       context: .
       args:
@@ -20,6 +22,8 @@ services:
       - rabbitmq
 
   promotion:
+    volumes:
+        - ./micro_services/public_keys:/promotion/micro_services/public_keys
     build:
       context: .
       args:
@@ -32,6 +36,8 @@ services:
       - rabbitmq
 
   ranking:
+    volumes:
+      - ./micro_services/public_keys:/ranking/micro_services/public_keys
     build:
       context: .
       args:
@@ -44,6 +50,8 @@ services:
       - rabbitmq
 
   notification:
+    volumes:
+      - ./micro_services/public_keys:/notification/micro_services/public_keys
     build:
       context: .
       args:
