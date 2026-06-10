@@ -5,11 +5,13 @@ THRESHOLD = 2
 
 class RankingService(Service):
     def __init__(self):
-        super().__init__("ranking", ['promocao.vote'])
+        super().__init__("ranking", ['promotion.vote'])
         self.votes = {}
 
-    def callback(self, event_json):
-        if self.verify_event(event_json):
+    def callback(self, ch, method, properties, body):
+        event_json = body.decode() # Converte bytes para string
+        
+        if self._verify_event(event_json):
             event = json.loads(event_json) # Converte o JSON para dicionário
             content = event["content"]
 
@@ -22,7 +24,7 @@ class RankingService(Service):
             if self.votes[promotion_id] >= THRESHOLD:
                 print(f"[{promotion_id}] Entrou em Destaque")
                 # publicar promotion.hot_deal
-                self.rabbitmq.publish("ranking", "promotion.hot_deal", content)
+                self._publish("ranking", "promotion.hot_deal", content)
         else:
             print("Assinatura inválida")
             return

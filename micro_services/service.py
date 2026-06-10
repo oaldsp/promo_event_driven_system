@@ -8,7 +8,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.exceptions import InvalidSignature
 
 EXCHANGE = 'promotions' # Roteador de mensagens
-RABBITMQ_PORT = os.getenv("RABBITMQ_PORT")
+RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT"))
 
 class Service:
     def __init__(self, name, routing_keys=[], consume=True):
@@ -53,7 +53,7 @@ class Service:
                 format=serialization.PublicFormat.SubjectPublicKeyInfo # Estrutura da chave pública
             ))
     
-    def get_public_key(service_name):
+    def _get_public_key(self, service_name):
         path = f"micro_services/public_keys/{service_name}_public_key.pem"
 
         with open(path, "rb") as f:
@@ -84,9 +84,9 @@ class Service:
 
         return decoded_signature
 
-    def verify_event(self, event):
+    def _verify_event(self, event):
         event = json.loads(event) # Converte o JSON para dicionário
-        public_key = self.get_public_key(event["producer"]) # Busca a chave pública do produtor da mensagem
+        public_key = self._get_public_key(event["producer"]) # Busca a chave pública do produtor da mensagem
     
         try:
             public_key.verify(
@@ -102,7 +102,7 @@ class Service:
         except InvalidSignature:
             return False
 
-    def publish(self, author, routing_key, content):
+    def _publish(self, author, routing_key, content):
         signature = self._generate_signature(content)
 
         event = {
@@ -118,7 +118,7 @@ class Service:
         )
         print(f"[{content['id']}] Evento publicado")
 
-    def callback(self):
+    def callback(self, ch, method, properties, body):
         # É necessário implementar o callback em cada serviço para processar as mensagens recebidas
         pass
     

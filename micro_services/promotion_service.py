@@ -5,15 +5,17 @@ class PromotionService(Service):
     def __init__(self):
         super().__init__("promotion", ["promotion.received"])
 
-    def callback(self, event_json):
-        if self.verify_event(event_json):
+    def callback(self, ch, method, properties, body):
+        event_json = body.decode() # Converte bytes para string
+
+        if self._verify_event(event_json):
             event = json.loads(event_json) # Converte o JSON para dicionário
             content = event["content"]
 
             print(f"[{content['id']}]Promoção validada:")
 
             # publicar promotion.publishe
-            self.rabbitmq.publish("promotion", "promotion.published", content)
+            self._publish("promotion", "promotion.published", content)
         else:
             print("Assinatura inválida")
             return

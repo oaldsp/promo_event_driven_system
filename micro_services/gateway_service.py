@@ -15,7 +15,7 @@ class GatewayService(Service):
         promotion["name"] = input("Nome: ")
         promotion["category"] = input("Categoria:")
 
-        self.publish("gateway", "promotion.received", promotion)
+        self._publish("gateway", "promotion.received", promotion)
         print("Promoção enviada para cadastro.")
 
     def vote(self):
@@ -27,7 +27,7 @@ class GatewayService(Service):
         print("========CADASTRAR PROMOÇÃO========")
         vote["promotion_id"] = input("Promoção: ")
 
-        self.publish("gateway", "promotion.voto", vote)
+        self._publish("gateway", "promotion.voto", vote)
         print("Voto enviada para cadastro.")
 
 if __name__ == "__main__":

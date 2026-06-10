@@ -5,16 +5,22 @@ class NotificationService(Service):
     def __init__(self):
         super().__init__("notification", ['promotion.published', 'promotion.hot_deal'])
 
-    def callback(self, event_json):
-        event = json.loads(event_json) # Converte o JSON para dicionário
-        content = event["content"]
+    def callback(self, ch, method, properties, body):
+        event_json = body.decode() # Converte bytes para string
 
-        category = content.get("category", "geral")
-        routing_key = f"promocao.{category}"
+        if self._verify_event(event_json):
+            event = json.loads(event_json) # Converte o JSON para dicionário
+            content = event["content"]
 
-        self.rabbitmq.publish("notification", routing_key, content)
+            category = content.get("category", "geral")
+            routing_key = f"promotion.{category}"
 
-        print(f"Notificação enviada: {routing_key}")
+            self._publish("notification", routing_key, content)
+
+            print(f"Notificação enviada: {routing_key}")
+        else:
+            print("Assinatura inválida")
+            return
 
 if __name__ == "__main__":
     NotificationService()

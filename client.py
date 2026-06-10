@@ -40,8 +40,8 @@ class Client:
 
         self.channel.basic_consume(queue=name_queue, on_message_callback=self.callback, auto_ack=True)
 
-    def callback(event_json):
-        event = json.loads(event_json) # Converte o JSON para dicionário
+    def callback(self, ch, method, properties, body):
+        event = json.loads(body.decode()) # Converte o JSON para dicionário
         content = event["content"]
         print(f"Recebido promoção [{content['name']}] da categoria [{content['category']}]")
 
