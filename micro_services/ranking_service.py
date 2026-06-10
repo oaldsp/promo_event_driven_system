@@ -5,8 +5,8 @@ THRESHOLD = 2
 
 class RankingService(Service):
     def __init__(self):
-        super().__init__("ranking", ['promotion.vote'])
         self.votes = {}
+        super().__init__("ranking", ['promotion.vote'])
 
     def callback(self, ch, method, properties, body):
         event_json = body.decode() # Converte bytes para string
@@ -16,7 +16,7 @@ class RankingService(Service):
             content = event["content"]
 
             # Computa o voto
-            promotion_id = content["promotion_id"]
+            promotion_id = content["id"]
             self.votes[promotion_id] = self.votes.get(promotion_id, 0) + 1
             print(f"[{promotion_id}] Eecebeu 1 voto totalizando: {self.votes[promotion_id]} votos")
 
