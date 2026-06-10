@@ -11,7 +11,7 @@ EXCHANGE = 'promotions' # Roteador de mensagens
 RABBITMQ_PORT = os.getenv("RABBITMQ_PORT")
 
 class Service:
-    def __init__(self, name, routing_keys=[]):
+    def __init__(self, name, routing_keys=[], consume=True):
         self.name = name
         self.channel = self._setup_rabbitmq_exchange()
         self.private_key, self.public_key = self._generate_keys()      
@@ -20,7 +20,8 @@ class Service:
         self._configure_queues(routing_keys)
 
         print(f"[{self.name}]Serviço rodando...")
-        self.channel.start_consuming()
+        if consume:
+            self.channel.start_consuming()
 
     def _setup_rabbitmq_exchange(self):
         # BlockingConnection -> Espera a resposta para cada ação
@@ -71,7 +72,11 @@ class Service:
     def _generate_signature(self, message):
         signature = self.private_key.sign(
             json.dumps(message).encode(), # Converte para bytes
-            padding.PSS(), # Preenche a mensagem com bytes aleatórios
+            # Preenche a mensagem com bytes aleatórios
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()), # Gera máscaras pseudoaleatórias usando SHA-256.
+                salt_length=padding.PSS.MAX_LENGTH # Utiliza o maior salt permitido pela chave, aumentando a segurança.
+            ),
             hashes.SHA256(), # Formata a mensagem
         )
 
@@ -87,7 +92,10 @@ class Service:
             public_key.verify(
                 base64.b64decode(event["signature"]), # Converte string para bytes
                 json.dumps(event["content"]).encode(), # Converte para bytes para fazer a verificação
-                padding.PSS(),
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()), 
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
                 hashes.SHA256(),
             )
             return True

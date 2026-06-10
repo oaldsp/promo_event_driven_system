@@ -15,7 +15,7 @@ services:
     env_file:
       - .env
     container_name: gateway
-    command: python  micro_services/gateway_service.py
+    command: sleep infinity
     depends_on:
       - rabbitmq
 
