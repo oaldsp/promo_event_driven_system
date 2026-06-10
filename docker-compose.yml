@@ -27,7 +27,7 @@ services:
     env_file:
       - .env
     container_name: promotion
-    command: python  micro_services/promotion_service.py
+    command: python -u micro_services/promotion_service.py
     depends_on:
       - rabbitmq
 
@@ -39,7 +39,7 @@ services:
     env_file:
       - .env
     container_name: ranking
-    command: python  micro_services/ranking_service.py
+    command: python -u micro_services/ranking_service.py
     depends_on:
       - rabbitmq
 
@@ -51,7 +51,7 @@ services:
     env_file:
       - .env
     container_name: notification
-    command: python  micro_services/notification_service.py
+    command: python -u micro_services/notification_service.py
     depends_on:
       - rabbitmq
 
@@ -64,8 +64,9 @@ services:
       - .env
     environment:
       CLIENT_ID: 1
+      ROUTING_KEYS: '["promotion.hot_deal", "promotion.teste1"]'
     container_name: client1
-    command: python  client.py
+    command: python -u client.py
     depends_on:
       - rabbitmq
 
@@ -78,7 +79,8 @@ services:
       - .env
     environment:
       CLIENT_ID: 2
+      ROUTING_KEYS: '["promotion.hot_deal", "promotion.teste2"]'
     container_name: client2
-    command: python  client.py
+    command: python -u client.py
     depends_on:
       - rabbitmq

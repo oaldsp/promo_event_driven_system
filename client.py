@@ -5,9 +5,9 @@ import pika
 EXCHANGE = 'promotions' # Roteador de mensagens
 RABBITMQ_PORT = os.getenv("RABBITMQ_PORT")
 CLIENT_ID = os.getenv("CLIENT_ID")
-
+ROUTING_KEYS = json.loads(os.getenv("ROUTING_KEYS"))
 class Client:
-    def __init__(self, routing_keys=[]):
+    def __init__(self, routing_keys=ROUTING_KEYS):
         self.id = CLIENT_ID
         self.channel = self._setup_rabbitmq_exchange()
     
