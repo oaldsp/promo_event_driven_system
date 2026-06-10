@@ -1,3 +1,4 @@
 .env
 micro_services/public_keys/*
 !micro_services/public_keys/.gitkeep
+.codex

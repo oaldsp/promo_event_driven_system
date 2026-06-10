@@ -21,8 +21,8 @@ class RankingService(Service):
             # Verifica se a promoção atingiu destaque
             if self.votes[promotion_id] >= THRESHOLD:
                 print(f"[{promotion_id}] Entrou em Destaque")
-                # publicar promocao.hot_deal
-                self.rabbitmq.publish("ranking", "promocao.hot_deal", content)
+                # publicar promotion.hot_deal
+                self.rabbitmq.publish("ranking", "promotion.hot_deal", content)
         else:
             print("Assinatura inválida")
             return

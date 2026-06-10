@@ -2,8 +2,8 @@ import json
 from service import Service
 
 class NotificationService(Service):
-    def __init__():
-        super().__init__("notification", ['promotion.published', 'promocao.hot_deal'])
+    def __init__(self):
+        super().__init__("notification", ['promotion.published', 'promotion.hot_deal'])
 
     def callback(self, event_json):
         event = json.loads(event_json) # Converte o JSON para dicionário

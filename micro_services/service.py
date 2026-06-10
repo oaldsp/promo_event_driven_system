@@ -11,7 +11,7 @@ EXCHANGE = 'promotions' # Roteador de mensagens
 RABBITMQ_PORT = os.getenv("RABBITMQ_PORT")
 
 class Service:
-    def __init__(self, name, routing_keys):
+    def __init__(self, name, routing_keys=[]):
         self.name = name
         self.channel = self._setup_rabbitmq_exchange()
         self.private_key, self.public_key = self._generate_keys()      
@@ -46,14 +46,14 @@ class Service:
         return private_key, public_key
 
     def _register_public_key(self):
-        with open(f"public_keys/{self.name}_public_key.pem", "wb") as f:
+        with open(f"micro_services/public_keys/{self.name}_public_key.pem", "wb") as f:
             f.write(self.public_key.public_bytes(
                 encoding=serialization.Encoding.PEM, # Tipo de codificação
                 format=serialization.PublicFormat.SubjectPublicKeyInfo # Estrutura da chave pública
             ))
     
     def get_public_key(service_name):
-        path = f"/keys/{service_name}_public.pem"
+        path = f"micro_services/public_keys/{service_name}_public_key.pem"
 
         with open(path, "rb") as f:
             return serialization.load_pem_public_key(f.read())
@@ -66,7 +66,7 @@ class Service:
         for routing_key in routing_keys:
             self.channel.queue_bind(exchange=EXCHANGE, queue=name_queue, routing_key=routing_key)
 
-        self.channel.basic_consume(queue=name_queue, on_message_callback=self.callback(), auto_ack=True)
+        self.channel.basic_consume(queue=name_queue, on_message_callback=self.callback, auto_ack=True)
 
     def _generate_signature(self, message):
         signature = self.private_key.sign(

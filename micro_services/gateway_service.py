@@ -1,8 +1,8 @@
 from service import Service
 
 class GatewayService(Service):
-    def __init__():
-        super().__init__()
+    def __init__(self):
+        super().__init__("gateway")
 
     def register_promotion(self):
         promotion = {

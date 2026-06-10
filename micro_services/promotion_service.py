@@ -2,7 +2,7 @@ import json
 from service import Service
 
 class PromotionService(Service):
-    def __init__():
+    def __init__(self):
         super().__init__("promotion", ["promotion.received"])
 
     def callback(self, event_json):
