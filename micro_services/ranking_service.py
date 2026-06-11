@@ -1,34 +1,52 @@
-import json
-from service import Service
+import asyncio
+import os
+from typing import Any
 
-THRESHOLD = 2
+from common import RabbitService, now_iso
 
-class RankingService(Service):
+
+HOT_DEAL_THRESHOLD = int(os.getenv("HOT_DEAL_THRESHOLD", "3"))
+
+
+class RankingService(RabbitService):
     def __init__(self):
-        self.votes = {}
-        super().__init__("ranking", ['promotion.vote'])
+        super().__init__("ranking")
+        self.scores: dict[str, int] = {}
+        self.hot_deals: set[str] = set()
 
-    def callback(self, ch, method, properties, body):
-        event_json = body.decode() # Converte bytes para string
-        
-        if self._verify_event(event_json):
-            event = json.loads(event_json) # Converte o JSON para dicionário
-            content = event["content"]
+    async def handle_vote(self, event: dict[str, Any]) -> None:
+        vote = event["content"]
+        promotion_id = vote["promotion_id"]
+        delta = 1 if vote["vote"] == "positivo" else -1
+        score = self.scores.get(promotion_id, 0) + delta
+        self.scores[promotion_id] = score
 
-            # Computa o voto
-            promotion_id = content["id"]
-            self.votes[promotion_id] = self.votes.get(promotion_id, 0) + 1
-            print(f"[{promotion_id}] Eecebeu 1 voto totalizando: {self.votes[promotion_id]} votos")
+        print(f"[ranking] {promotion_id} recebeu voto {vote['vote']}; score={score}")
 
-            # Verifica se a promoção atingiu destaque
-            if self.votes[promotion_id] >= THRESHOLD:
-                print(f"[{promotion_id}] Entrou em Destaque")
-                # publicar promotion.hot_deal
-                self._publish("ranking", "promotion.hot_deal", content)
-        else:
-            print("Assinatura inválida")
-            return
+        if score >= HOT_DEAL_THRESHOLD and promotion_id not in self.hot_deals:
+            self.hot_deals.add(promotion_id)
+            await self.publish(
+                "promocao.destaque",
+                {
+                    "id": promotion_id,
+                    "title": vote["title"],
+                    "category": vote["category"],
+                    "store_email": vote["store_email"],
+                    "score": score,
+                    "threshold": HOT_DEAL_THRESHOLD,
+                    "hot_deal": True,
+                    "highlighted_at": now_iso(),
+                },
+            )
+            print(f"[ranking] hot deal: {promotion_id}")
+
+
+async def main() -> None:
+    service = RankingService()
+    await service.connect()
+    print("[ranking] aguardando promocao.voto")
+    await service.consume("ranking_service_queue", ["promocao.voto"], service.handle_vote)
+
 
 if __name__ == "__main__":
-    RankingService()
-    
+    asyncio.run(main())
