@@ -1,2 +1,6 @@
-pika
+aio-pika
 cryptography
+email-validator
+fastapi
+httpx
+uvicorn[standard]

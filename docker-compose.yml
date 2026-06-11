@@ -1,94 +1,92 @@
 services:
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    container_name: promo-rabbitmq
     ports:
-      - "${RABBITMQ_PORT}:5672"
-      - "15672:15672" # Interface web (dashboard)
-      #http://localhost:15672 user: guest pass: guest
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
 
   gateway:
-    volumes:
-      - ./micro_services/public_keys:/gateway/micro_services/public_keys
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         SERVICE_NAME: gateway
+    container_name: promo-gateway
+    command: python -m uvicorn gateway_service:app --app-dir micro_services --host 0.0.0.0 --port 8000
     env_file:
       - .env
-    container_name: gateway
-    command: sleep infinity
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    volumes:
+      - ./micro_services/public_keys:/gateway/micro_services/public_keys
+    ports:
+      - "8000:8000"
     depends_on:
       - rabbitmq
 
   promotion:
-    volumes:
-        - ./micro_services/public_keys:/promotion/micro_services/public_keys
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         SERVICE_NAME: promotion
+    container_name: promo-promotion
+    command: python -u micro_services/promotion_service.py
     env_file:
       - .env
-    container_name: promotion
-    command: python -u micro_services/promotion_service.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    volumes:
+      - ./micro_services/public_keys:/promotion/micro_services/public_keys
     depends_on:
       - rabbitmq
 
   ranking:
-    volumes:
-      - ./micro_services/public_keys:/ranking/micro_services/public_keys
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         SERVICE_NAME: ranking
+    container_name: promo-ranking
+    command: python -u micro_services/ranking_service.py
     env_file:
       - .env
-    container_name: ranking
-    command: python -u micro_services/ranking_service.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    volumes:
+      - ./micro_services/public_keys:/ranking/micro_services/public_keys
     depends_on:
       - rabbitmq
 
   notification:
-    volumes:
-      - ./micro_services/public_keys:/notification/micro_services/public_keys
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         SERVICE_NAME: notification
-    env_file:
-      - .env
-    container_name: notification
+    container_name: promo-notification
     command: python -u micro_services/notification_service.py
-    depends_on:
-      - rabbitmq
-
-  client1:
-    build:
-      context: .
-      args:
-        SERVICE_NAME: client1
     env_file:
       - .env
     environment:
-      CLIENT_ID: 1
-      ROUTING_KEYS: '["promotion.hot_deal", "promotion.teste1"]'
-    container_name: client1
-    command: python -u client.py
+      RABBITMQ_HOST: rabbitmq
+    volumes:
+      - ./micro_services/public_keys:/notification/micro_services/public_keys
     depends_on:
       - rabbitmq
 
-  client2:
+  frontend:
     build:
-      context: .
-      args:
-        SERVICE_NAME: client2
-    env_file:
-      - .env
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: promo-frontend
     environment:
-      CLIENT_ID: 2
-      ROUTING_KEYS: '["promotion.hot_deal", "promotion.teste2"]'
-    container_name: client2
-    command: python -u client.py
+      VITE_API_URL: http://localhost:8000
+    ports:
+      - "5173:5173"
     depends_on:
-      - rabbitmq
+      - gateway
