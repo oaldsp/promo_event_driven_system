@@ -1,0 +1,316 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #17202a;
+  background: #f4f7f6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  align-items: center;
+  border: 1px solid #c9d4d1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #17202a;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 12px;
+}
+
+button:hover {
+  border-color: #2e7d73;
+}
+
+input,
+textarea {
+  border: 1px solid #c9d4d1;
+  border-radius: 8px;
+  color: #17202a;
+  min-height: 42px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.topbar {
+  align-items: end;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin: 0 auto 22px;
+  max-width: 1440px;
+}
+
+.topbar h1 {
+  font-size: clamp(2rem, 4vw, 3.75rem);
+  line-height: 1;
+  margin: 0 0 8px;
+}
+
+.topbar p {
+  color: #586560;
+  margin: 0;
+}
+
+.user-field {
+  color: #586560;
+  display: grid;
+  font-size: 0.86rem;
+  gap: 6px;
+  min-width: 240px;
+}
+
+.workspace {
+  align-items: start;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr) minmax(280px, 340px);
+  margin: 0 auto;
+  max-width: 1440px;
+}
+
+.panel,
+.promotion-card {
+  background: #ffffff;
+  border: 1px solid #d9e2df;
+  border-radius: 8px;
+}
+
+.panel {
+  padding: 18px;
+}
+
+.panel h2,
+.section-header h2 {
+  align-items: center;
+  display: flex;
+  font-size: 1rem;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.side-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.stack {
+  display: grid;
+  gap: 10px;
+}
+
+.primary {
+  background: #1f7a64;
+  border-color: #1f7a64;
+  color: #ffffff;
+}
+
+.inline-form {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) 44px;
+}
+
+.inline-form button,
+.ghost,
+.promotion-card footer button,
+.chip button {
+  aspect-ratio: 1;
+  padding: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  align-items: center;
+  background: #edf4f1;
+  border: 1px solid #cfe0da;
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 5px 4px 12px;
+}
+
+.chip button {
+  border-radius: 999px;
+  min-height: 24px;
+  width: 24px;
+}
+
+.content {
+  min-width: 0;
+}
+
+.section-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-header h2 {
+  margin-bottom: 4px;
+}
+
+.section-header span {
+  color: #66736e;
+  font-size: 0.9rem;
+}
+
+.promotion-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.promotion-card {
+  display: grid;
+  gap: 12px;
+  min-height: 238px;
+  padding: 16px;
+}
+
+.promotion-card header,
+.promotion-card footer {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.promotion-card h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.promotion-card p {
+  color: #586560;
+  margin: 0;
+}
+
+.promotion-card strong {
+  font-size: 1.35rem;
+}
+
+.promotion-card footer {
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.category,
+.hot,
+.notification span,
+.hot-list span {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.78rem;
+  gap: 5px;
+  min-height: 26px;
+  padding: 4px 10px;
+}
+
+.category {
+  background: #eaf2ff;
+  color: #185a9d;
+}
+
+.hot {
+  background: #fff0d9;
+  color: #9a4f00;
+}
+
+.notifications {
+  max-height: calc(100vh - 140px);
+  overflow: auto;
+}
+
+.hot-list,
+.notification-list {
+  display: grid;
+  gap: 10px;
+}
+
+.hot-list {
+  margin-bottom: 16px;
+}
+
+.hot-list span {
+  background: #fff0d9;
+  color: #9a4f00;
+  justify-content: flex-start;
+}
+
+.notification {
+  border-left: 3px solid #1f7a64;
+  padding: 6px 0 6px 12px;
+}
+
+.notification span {
+  background: #edf4f1;
+  color: #1f7a64;
+  padding-inline: 8px;
+}
+
+.notification p,
+.empty {
+  color: #586560;
+  margin: 8px 0 0;
+}
+
+@media (max-width: 1100px) {
+  .workspace {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .content {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 16px;
+  }
+
+  .topbar,
+  .workspace {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .notifications {
+    max-height: none;
+  }
+}
